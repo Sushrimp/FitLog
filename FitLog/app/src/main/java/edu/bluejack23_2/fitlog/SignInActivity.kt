@@ -53,7 +53,8 @@ class SignInActivity : AppCompatActivity() {
 //                    val user = auth.currentUser
 //                    errorText.text = user?.uid.toString()
 
-                    val intent = Intent(this@SignInActivity, ProfileActivity::class.java)
+//                    val intent = Intent(this@SignInActivity, ProfileActivity::class.java)
+                    val intent = Intent(this@SignInActivity, HomeActivity::class.java)
                     startActivity(intent)
                     finish()
                 } else {

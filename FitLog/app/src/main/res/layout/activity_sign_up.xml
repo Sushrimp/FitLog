@@ -19,14 +19,14 @@
         android:textSize="50dp" />
 
     <EditText
-        android:layout_below="@id/titleTxt_signUp"
         android:id="@+id/name_signUp"
-
         android:layout_width="300dp"
+
         android:layout_height="wrap_content"
+        android:layout_below="@id/titleTxt_signUp"
 
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="50dp"
 
         android:ems="10"
         android:hint="Name"
@@ -139,14 +139,14 @@
         android:textColor="@android:color/holo_red_light" />
 
     <Button
-        android:layout_below="@id/password_signUp"
         android:id="@+id/signUp_signUp"
+        android:layout_width="wrap_content"
+
+        android:layout_height="wrap_content"
+        android:layout_below="@id/password_signUp"
 
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
         android:text="Sign Up" />
 
 </RelativeLayout>
