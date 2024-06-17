@@ -55,6 +55,7 @@
         android:layout_marginTop="75dp"
         android:fontFamily="@font/poppins_bold"
         android:text=""
+        android:textAlignment="center"
         android:textColor="@android:color/holo_red_light" />
 
     <Button

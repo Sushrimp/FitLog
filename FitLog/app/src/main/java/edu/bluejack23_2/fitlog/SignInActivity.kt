@@ -3,18 +3,22 @@ package edu.bluejack23_2.fitlog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import edu.bluejack23_2.fitlog.handler.AuthenticationHandler
 
 class SignInActivity : AppCompatActivity() {
-    private lateinit var auth: FirebaseAuth
+    private lateinit var authHandler : AuthenticationHandler
 
-    internal lateinit var emailField: EditText
-    internal lateinit var passwordField: EditText
-    internal lateinit var errorText: TextView
-    internal lateinit var signInBtn : Button
+    private lateinit var emailField: EditText
+    private lateinit var passwordField: EditText
+    private lateinit var errorText: TextView
+    private lateinit var signInBtn : Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +29,7 @@ class SignInActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.title = ""
 
-        auth = FirebaseAuth.getInstance()
+        authHandler = AuthenticationHandler()
         // Take used components
         emailField = findViewById(R.id.email_signIn)
         passwordField = findViewById(R.id.password_signIn)
@@ -41,26 +45,21 @@ class SignInActivity : AppCompatActivity() {
         val email = emailField.text.toString()
         val password = passwordField.text.toString()
 
-        if(email.equals("")|| password.equals("")){
-            errorText.text = "All field must not be empty"
-            return
-        }
-        errorText.text = ""
+        authHandler.signIn(email, password){response ->
+            if(!response.status){
+                errorText.text = response.msg
+            }
+            else {
+                errorText.text = ""
 
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-//                    val user = auth.currentUser
-//                    errorText.text = user?.uid.toString()
-
-//                    val intent = Intent(this@SignInActivity, ProfileActivity::class.java)
-                    val intent = Intent(this@SignInActivity, HomeActivity::class.java)
+                Toast.makeText(this, "Sign in success !", Toast.LENGTH_SHORT).show()
+                Handler(Looper.getMainLooper()).postDelayed({
+                    val intent = Intent(this@SignInActivity, ProfileActivity::class.java)
                     startActivity(intent)
                     finish()
-                } else {
-                    errorText.text = "Invalid Credentials"
-                }
+                }, 1000)
             }
+        }
 
     }
 
