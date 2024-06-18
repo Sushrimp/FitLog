@@ -54,7 +54,7 @@ class SignInActivity : AppCompatActivity() {
 
                 Toast.makeText(this, "Sign in success !", Toast.LENGTH_SHORT).show()
                 Handler(Looper.getMainLooper()).postDelayed({
-                    val intent = Intent(this@SignInActivity, ProfileActivity::class.java)
+                    val intent = Intent(this@SignInActivity, HomeActivity::class.java)
                     startActivity(intent)
                     finish()
                 }, 1000)
