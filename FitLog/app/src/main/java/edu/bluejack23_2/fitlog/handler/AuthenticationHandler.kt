@@ -56,4 +56,10 @@ class AuthenticationHandler {
 
     }
 
+    fun signOut(callback: (Response) -> Unit){
+        repo.signOut(){response ->
+            callback(response)
+        }
+    }
+
 }

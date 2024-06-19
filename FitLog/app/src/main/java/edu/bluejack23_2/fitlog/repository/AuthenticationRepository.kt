@@ -45,5 +45,10 @@ class AuthenticationRepository {
             }
     }
 
+    fun signOut(callback: (Response) -> Unit){
+        auth.signOut()
+        callback(Response(true, "Signed Out"))
+    }
+
 
 }
