@@ -5,6 +5,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import edu.bluejack23_2.fitlog.handler.AuthenticationHandler
+import edu.bluejack23_2.fitlog.handler.UserHandler
 
 class OnboardingActivity : AppCompatActivity() {
 
@@ -37,5 +39,7 @@ class OnboardingActivity : AppCompatActivity() {
 
         }
     }
+
+
 
 }

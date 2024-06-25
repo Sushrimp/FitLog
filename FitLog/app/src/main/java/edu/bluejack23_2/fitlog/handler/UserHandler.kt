@@ -13,9 +13,9 @@ class UserHandler {
         repo = UserRepository()
     }
 
-    fun setProfilePicture(profilePicture : ImageView) {
+    fun setProfilePicture(profilePicture: ImageView) {
         repo.getProfilePicture { response ->
-            var fileRef = response.msg
+            val fileRef = response.msg
             fileRef.downloadUrl.addOnSuccessListener { downloadUrl ->
                 Glide.with(profilePicture.context)
                     .load(downloadUrl)

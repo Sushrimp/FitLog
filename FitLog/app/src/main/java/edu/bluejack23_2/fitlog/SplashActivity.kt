@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import edu.bluejack23_2.fitlog.handler.UserHandler
 
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -12,11 +13,25 @@ class SplashActivity : AppCompatActivity() {
         supportActionBar?.hide()
         setContentView(R.layout.activity_splash)
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            val intent = Intent(this@SplashActivity, OnboardingActivity::class.java)
-            startActivity(intent)
-            finish()
-        }, 2000)
+        checkUser()
+    }
 
+    private fun checkUser() {
+        val userHandler = UserHandler()
+
+        userHandler.getUserDetails { response ->
+            val nextActivity = if (response.status) {
+                HomeActivity::class.java
+            } else {
+                OnboardingActivity::class.java
+            }
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                val intent = Intent(this@SplashActivity, nextActivity)
+                startActivity(intent)
+                finish()
+            }, 2000)
+
+        }
     }
 }

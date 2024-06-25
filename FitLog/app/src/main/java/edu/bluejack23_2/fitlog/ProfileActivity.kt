@@ -35,13 +35,16 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         userHandler.getUserDetails { response ->
-            userHandler.setProfilePicture(findViewById<ImageView>(R.id.profilePicture_Profile))
-            findViewById<TextView>(R.id.name_Profile).text = response.user.name
-            findViewById<TextView>(R.id.username_Profile).text = "@" + response.user.username
-            findViewById<TextView>(R.id.email_Profile).text = response.user.email
-            findViewById<TextView>(R.id.gender_Profile).text = response.user.gender
-            findViewById<TextView>(R.id.age_Profile).text = "Age : " + response.user.age
+            if(response.status){
+                findViewById<TextView>(R.id.name_Profile).text = response.user.name
+                findViewById<TextView>(R.id.username_Profile).text = "@" + response.user.username
+                findViewById<TextView>(R.id.email_Profile).text = response.user.email
+                findViewById<TextView>(R.id.gender_Profile).text = response.user.gender
+                findViewById<TextView>(R.id.age_Profile).text = "Age : " + response.user.age
+            }
         }
+
+        userHandler.setProfilePicture(findViewById<ImageView>(R.id.profilePicture_Profile))
     }
 
     private fun handleSignOut (){

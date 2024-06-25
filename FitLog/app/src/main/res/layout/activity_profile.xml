@@ -94,6 +94,38 @@
 
 
 
+    <LinearLayout
+        android:layout_below="@id/age_Profile"
+
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:layout_width="325dp"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/editProfile_Profile"
+
+            android:layout_centerHorizontal="true"
+            android:layout_marginRight="25dp"
+
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:textSize="10dp"
+            android:text="Edit Profile" />
+
+        <Button
+            android:id="@+id/changePassword_Profile"
+
+            android:layout_centerHorizontal="true"
+
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:textSize="10dp"
+            android:text="Change Password" />
+
+
+    </LinearLayout>
+
     <Button
         android:id="@+id/signOut_Profile"
         android:layout_below="@id/age_Profile"
@@ -102,7 +134,7 @@
 
         android:layout_centerHorizontal="true"
 
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:text="Sign Out" />
 

@@ -24,6 +24,7 @@ class UserRepository {
         val storageRef = storage.reference
 
         if (currentUser == null) {
+            // User is not logged in, return the default empty profile picture
             val fileRef = storageRef.child("profilePictures/emptyProfile.jpg")
             val response = StorageResponse(true, fileRef)
             callback(response)
@@ -32,11 +33,13 @@ class UserRepository {
             val userFileRef = storageRef.child("profilePictures/$uid.png")
 
             userFileRef.metadata
-                .addOnSuccessListener { metadata ->
+                .addOnSuccessListener {
+                    // Metadata exists, file should exist
                     val response = StorageResponse(true, userFileRef)
                     callback(response)
                 }
-                .addOnFailureListener { exception ->
+                .addOnFailureListener {
+                    // Metadata retrieval failed, fallback to the default empty profile picture
                     val emptyFileRef = storageRef.child("profilePictures/emptyProfile.jpg")
                     val response = StorageResponse(false, emptyFileRef)
                     callback(response)
@@ -65,8 +68,7 @@ class UserRepository {
                             "User detail retrieved successfully"
                         )
                         callback(response)
-                    }
-                    else {
+                    } else {
                         val response = UserResponse(
                             false,
                             User(
@@ -77,11 +79,40 @@ class UserRepository {
                                 name = "",
                                 gender = ""
                             ),
-                            "User detail retrieve failed"
+                            "User detail retrieval failed: document does not exist"
                         )
                         callback(response)
                     }
                 }
+                .addOnFailureListener { exception ->
+                    val response = UserResponse(
+                        false,
+                        User(
+                            uid = "",
+                            age = "",
+                            email = "",
+                            username = "",
+                            name = "",
+                            gender = ""
+                        ),
+                        "User detail retrieval failed: ${exception.message}"
+                    )
+                    callback(response)
+                }
+        } else {
+            val response = UserResponse(
+                false,
+                User(
+                    uid = "",
+                    age = "",
+                    email = "",
+                    username = "",
+                    name = "",
+                    gender = ""
+                ),
+                "No current user logged in"
+            )
+            callback(response)
         }
     }
 }
