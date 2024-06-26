@@ -2,6 +2,7 @@ package edu.bluejack23_2.fitlog.handler
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.rpc.context.AttributeContext.Response
+import edu.bluejack23_2.fitlog.models.BodyPart
 import edu.bluejack23_2.fitlog.models.Schedule
 import edu.bluejack23_2.fitlog.repository.ScheduleRepository
 import java.util.Calendar
@@ -58,6 +59,16 @@ class ScheduleHandler {
                 } else {
                     callback(null)
                 }
+            }
+        }
+    }
+
+    fun getAllBodyParts(callback: (List<BodyPart>?) -> Unit){
+        repo.getAllBodyParts { bodyParts ->
+            if(bodyParts != null) {
+                callback(bodyParts)
+            } else {
+                callback(null)
             }
         }
     }

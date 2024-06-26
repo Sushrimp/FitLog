@@ -30,22 +30,31 @@ class UserRepository {
             callback(response)
         } else {
             val uid = currentUser.uid
-            val userFileRef = storageRef.child("profilePictures/$uid.png")
+            val userDirRef = storageRef.child("profilePictures")
 
-            userFileRef.metadata
-                .addOnSuccessListener {
-                    // Metadata exists, file should exist
-                    val response = StorageResponse(true, userFileRef)
-                    callback(response)
+            userDirRef.listAll()
+                .addOnSuccessListener { result ->
+                    // Find the file with the user's UID
+                    val userFileRef = result.items.find { it.name.startsWith(uid) }
+                    if (userFileRef != null) {
+                        val response = StorageResponse(true, userFileRef)
+                        callback(response)
+                    } else {
+                        // No matching file found, return the default empty profile picture
+                        val emptyFileRef = storageRef.child("profilePictures/emptyProfile.jpg")
+                        val response = StorageResponse(false, emptyFileRef)
+                        callback(response)
+                    }
                 }
                 .addOnFailureListener {
-                    // Metadata retrieval failed, fallback to the default empty profile picture
+                    // Listing files failed, fallback to the default empty profile picture
                     val emptyFileRef = storageRef.child("profilePictures/emptyProfile.jpg")
                     val response = StorageResponse(false, emptyFileRef)
                     callback(response)
                 }
         }
     }
+
 
     fun getUserDetails(callback: (UserResponse) -> Unit) {
         val currentUser = auth.currentUser

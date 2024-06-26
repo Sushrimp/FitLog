@@ -53,7 +53,8 @@ class HomeActivity : AppCompatActivity() {
                         )
                     }
                     addScheduleButton.setOnClickListener {
-                        // add schedule function
+                        val intent = Intent(this@HomeActivity, AddScheduleActivity::class.java)
+                        startActivity(intent)
                     }
                     scheduleLinearLayout.addView(addScheduleButton)
                     scheduleContainer.setCardBackgroundColor(Color.rgb(128, 0, 0))

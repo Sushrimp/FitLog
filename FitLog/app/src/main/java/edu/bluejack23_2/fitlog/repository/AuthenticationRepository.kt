@@ -29,21 +29,37 @@ class AuthenticationRepository {
             }
     }
 
-    fun signUp(user: HashMap<String, String>, email: String, password: String, callback: (Response) -> Unit){
+    fun signUp(user: HashMap<String, String>, email: String, password: String, callback: (Response) -> Unit) {
         auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener() { task ->
-                val response = if (task.isSuccessful) {
-                    db.collection("users")
-                        .add(user)
-
-                    Response(true, "Signed up successfully")
-
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // User successfully created, now get the UID
+                    val currentUser = auth.currentUser
+                    if (currentUser != null) {
+                        val uid = currentUser.uid
+                        // Add user data to the Firestore database with the UID as the document ID
+                        db.collection("users").document(uid)
+                            .set(user)
+                            .addOnSuccessListener {
+                                val response = Response(true, "Signed up successfully")
+                                callback(response)
+                            }
+                            .addOnFailureListener { e ->
+                                // Handle the error if setting the document fails
+                                val response = Response(false, "Failed to create user document: ${e.message}")
+                                callback(response)
+                            }
+                    } else {
+                        val response = Response(false, "Failed to retrieve user UID")
+                        callback(response)
+                    }
                 } else {
-                    Response(false, "Email is in used")
+                    val response = Response(false, "Email is in use")
+                    callback(response)
                 }
-                callback(response)
             }
     }
+
 
     fun signOut(callback: (Response) -> Unit){
         auth.signOut()

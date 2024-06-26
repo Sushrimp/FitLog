@@ -61,7 +61,6 @@ class SignInActivity : AppCompatActivity() {
                 }, 1000)
             }
         }
-
     }
 
     override fun onSupportNavigateUp(): Boolean {

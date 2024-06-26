@@ -78,7 +78,7 @@ class SignUpActivity : AppCompatActivity() {
             else {
                 errorTxt.text = ""
 
-                Toast.makeText(this, "Sign up success !", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Sign up success!", Toast.LENGTH_SHORT).show()
                 Handler(Looper.getMainLooper()).postDelayed({
                     val intent = Intent(this@SignUpActivity, ProfileActivity::class.java)
                     startActivity(intent)
@@ -86,7 +86,6 @@ class SignUpActivity : AppCompatActivity() {
                 }, 1000)
             }
         }
-
     }
 
     override fun onSupportNavigateUp(): Boolean {

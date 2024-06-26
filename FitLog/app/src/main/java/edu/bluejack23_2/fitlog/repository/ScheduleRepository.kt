@@ -56,4 +56,17 @@ class ScheduleRepository {
             }
         }
     }
+
+    fun getAllBodyParts(callback: (List<BodyPart>?) -> Unit) {
+        val bodyParts = mutableListOf <BodyPart>()
+        db.collection("bodyParts").get().addOnSuccessListener {querySnapshot ->
+            for(doc in querySnapshot) {
+                val bodyPart = BodyPart(doc.id, doc.getString("bodyPart"))
+                bodyParts.add(bodyPart)
+            }
+            callback(bodyParts)
+        }.addOnFailureListener {
+            callback(null)
+        }
+    }
 }
