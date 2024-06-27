@@ -7,37 +7,48 @@
     tools:context=".AddScheduleActivity">
 
     <LinearLayout
+        android:id="@+id/datePickerContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20sp"
         android:orientation="horizontal"
-        android:id="@+id/datePickerContainer"
-        android:paddingLeft="20sp"
-        android:layout_marginTop="20sp">
+        android:paddingLeft="20sp">
+
         <TextView
+            android:id="@+id/datePickerText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="20sp"
-            android:id="@+id/datePickerText"
             android:text="Select Date"
-            android:textStyle="bold">
-        </TextView>
+            android:textStyle="bold"></TextView>
+
         <Button
+            android:id="@+id/datePickerButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/datePickerButton"
-            android:text="Pick Date">
-        </Button>
+            android:text="Pick Date"></Button>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="vertical"-->
+<!--        android:padding="16dp"-->
+<!--        android:id="@+id/bodyPartContainer"-->
+<!--        android:layout_below="@+id/datePickerContainer"-->
+<!--        android:layout_marginTop="20sp">-->
+
+<!--        -->
+
+<!--    </LinearLayout>-->
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:id="@+id/bodyPartContainer"
-        android:layout_below="@+id/datePickerContainer"
-        android:layout_marginTop="20sp">
 
-    </LinearLayout>
+        android:layout_below="@id/datePickerContainer"
+        android:layout_marginTop="20sp"
+        android:id="@+id/bodyParts"
+        android:orientation="horizontal"  />
+
 
 </RelativeLayout>

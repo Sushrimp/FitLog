@@ -11,17 +11,24 @@ import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.core.view.marginTop
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
 import edu.bluejack23_2.fitlog.databinding.ActivityAddScheduleBinding
 import edu.bluejack23_2.fitlog.handler.ScheduleHandler
 import edu.bluejack23_2.fitlog.models.BodyPart
 import edu.bluejack23_2.fitlog.models.BodyPartSpinnerAdapter
+import edu.bluejack23_2.fitlog.models.Item
+import edu.bluejack23_2.fitlog.models.ItemAdapter
+import java.util.ArrayList
 import java.util.Calendar
 
 class AddScheduleActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddScheduleBinding
     private lateinit var scheduleHandler: ScheduleHandler
+
+    private lateinit var bodyPartList: ArrayList<Item>
 
     private lateinit var spinnerAdapter: BodyPartSpinnerAdapter
 
@@ -57,7 +64,27 @@ class AddScheduleActivity : AppCompatActivity() {
             )
             datePickerDialog.show()
         }
+
+        setRecycleView()
     }
+
+    fun setRecycleView(){
+
+
+        binding.bodyParts.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        binding.bodyParts.setHasFixedSize(true)
+
+        bodyPartList = ArrayList<Item>()
+        bodyPartList.add(Item("Chest", R.drawable.chest))
+        bodyPartList.add(Item("Back", R.drawable.back))
+        bodyPartList.add(Item("Leg", R.drawable.leg))
+        bodyPartList.add(Item("Bicep", R.drawable.bicep))
+        bodyPartList.add(Item("Tricep", R.drawable.tricep))
+
+
+        binding.bodyParts.adapter = ItemAdapter(bodyPartList)
+    }
+
 
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
