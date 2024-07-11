@@ -7,41 +7,41 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.view.marginLeft
+import edu.bluejack23_2.fitlog.databinding.ActivityAddScheduleBinding
+import edu.bluejack23_2.fitlog.databinding.ActivityHomeBinding
 import edu.bluejack23_2.fitlog.handler.ScheduleHandler
 import edu.bluejack23_2.fitlog.handler.UserHandler
 import org.jetbrains.annotations.Async.Schedule
 
 class HomeActivity : AppCompatActivity() {
 
-    private lateinit var profilePicture : ImageView
-    private lateinit var scheduleContainer : CardView
-    private lateinit var scheduleLinearLayout: LinearLayout
-    private lateinit var scheduleText : TextView
-
     private lateinit var userHandler : UserHandler
     private lateinit var scheduleHandler: ScheduleHandler
 
+    private lateinit var binding : ActivityHomeBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
         supportActionBar?.hide()
+
+        binding = ActivityHomeBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        popupMenu()
 
         userHandler = UserHandler()
         scheduleHandler = ScheduleHandler()
 
-        profilePicture = findViewById(R.id.profilePicture_Home)
-        userHandler.setProfilePicture(profilePicture)
+        userHandler.setProfilePicture(binding.profilePictureHome)
 
-        profilePicture.setOnClickListener{
+        binding.profilePictureHome.setOnClickListener{
             val intent = Intent(this@HomeActivity, ProfileActivity::class.java)
             startActivity(intent)
         }
-        scheduleContainer = findViewById(R.id.scheduleContainer)
-        scheduleLinearLayout = findViewById(R.id.scheduleLinearLayout)
-        scheduleText = findViewById(R.id.scheduleText)
         scheduleHandler.getTodaySchedule { schedule ->
             runOnUiThread {
                 if (schedule == null) {
@@ -56,8 +56,8 @@ class HomeActivity : AppCompatActivity() {
                         val intent = Intent(this@HomeActivity, AddScheduleActivity::class.java)
                         startActivity(intent)
                     }
-                    scheduleLinearLayout.addView(addScheduleButton)
-                    scheduleContainer.setCardBackgroundColor(Color.rgb(128, 0, 0))
+                    binding.scheduleLinearLayout.addView(addScheduleButton)
+                    binding.scheduleContainer.setCardBackgroundColor(Color.rgb(128, 0, 0))
                 } else {
                     val bodyPartsList = schedule.bodyParts
                     val bodyParts = bodyPartsList?.map { it.bodyPart } ?: listOf()
@@ -68,7 +68,7 @@ class HomeActivity : AppCompatActivity() {
                             LinearLayout.LayoutParams.WRAP_CONTENT
                         )
                     }
-                    scheduleLinearLayout.addView(bodyPartsText)
+                    binding.scheduleLinearLayout.addView(bodyPartsText)
                     val startActivityButton = Button(this).apply {
                         text = "Start Activity"
                         layoutParams = LinearLayout.LayoutParams(
@@ -79,9 +79,46 @@ class HomeActivity : AppCompatActivity() {
                     startActivityButton.setOnClickListener {
                         // start activity function
                     }
-                    scheduleLinearLayout.addView(startActivityButton)
+                    binding.scheduleLinearLayout.addView(startActivityButton)
                 }
             }
+        }
+    }
+    private fun popupMenu() {
+        val popupMenu = PopupMenu(applicationContext, binding.addButton)
+        popupMenu.inflate(R.menu.add_menu)
+        popupMenu.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.nav_schedule -> {
+                    val intent = Intent(this@HomeActivity, AddScheduleActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.nav_pr -> {
+                    val intent = Intent(this@HomeActivity, AddPersonalRecordActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                else -> true
+            }
+        }
+
+        binding.addButton.setOnClickListener {
+            println("Test")
+            try {
+                val popup = PopupMenu::class.java.getDeclaredField("mPopup")
+                popup.isAccessible = true
+                val menu = popup.get(popupMenu)
+                menu.javaClass
+                    .getDeclaredMethod("setForceShowIcon", Boolean::class.java)
+                    .invoke(menu, true)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                popupMenu.show()
+            }
+
+            true
         }
     }
 
