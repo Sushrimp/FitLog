@@ -117,7 +117,6 @@ class HomeActivity : AppCompatActivity() {
             } finally {
                 popupMenu.show()
             }
-
             true
         }
     }

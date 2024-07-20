@@ -69,8 +69,6 @@ class AddScheduleActivity : AppCompatActivity() {
     }
 
     fun setRecycleView(){
-
-
         binding.bodyParts.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.bodyParts.setHasFixedSize(true)
 
@@ -80,7 +78,6 @@ class AddScheduleActivity : AppCompatActivity() {
         bodyPartList.add(Item("Leg", R.drawable.leg))
         bodyPartList.add(Item("Bicep", R.drawable.bicep))
         bodyPartList.add(Item("Tricep", R.drawable.tricep))
-
 
         binding.bodyParts.adapter = ItemAdapter(bodyPartList)
     }
