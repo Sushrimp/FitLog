@@ -21,12 +21,22 @@ class ForumAdapter(private val forums: List<Forum>) : RecyclerView.Adapter<Forum
 
     override fun onBindViewHolder(holder: ForumViewHolder, position: Int) {
         val currentItem = forums[position]
-        holder.titleItem.text = currentItem.uid
+        holder.name.text = currentItem.name
+        holder.username.text = currentItem.username
+        holder.content.text = currentItem.content
     }
 
     class ForumViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val titleItem: TextView = itemView.findViewById(R.id.name)
+        val name: TextView = itemView.findViewById(R.id.name)
+        val username: TextView = itemView.findViewById(R.id.username)
+        val content: TextView = itemView.findViewById(R.id.forumContent)
     }
 }
 
-data class Forum(val uid: String)
+data class Forum(
+    val forumId: String,
+    val posterUid: String?,
+    val name: String?,
+    val username: String?,
+    val content: String?
+)
