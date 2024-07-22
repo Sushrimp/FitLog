@@ -66,5 +66,12 @@ class AuthenticationRepository {
         callback(Response(true, "Signed Out"))
     }
 
-
+    fun getAuthorizedUser(callback: (uid: String?) -> Unit) {
+        val currentUser = auth.currentUser
+        if(currentUser != null) {
+            callback(currentUser.uid)
+        } else {
+            callback(null)
+        }
+    }
 }

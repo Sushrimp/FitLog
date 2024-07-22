@@ -1,9 +1,12 @@
 package edu.bluejack23_2.fitlog.repository
 
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import edu.bluejack23_2.fitlog.models.BodyPart
 import edu.bluejack23_2.fitlog.models.MoveSet
+import edu.bluejack23_2.fitlog.models.PersonalRecord
+import edu.bluejack23_2.fitlog.models.Response
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -11,9 +14,11 @@ import kotlinx.coroutines.tasks.await
 
 class PersonalRecordRepository {
     private var db: FirebaseFirestore
+    private var auth: FirebaseAuth
 
     constructor() {
         db = FirebaseFirestore.getInstance()
+        auth = FirebaseAuth.getInstance()
     }
 
     fun getAllBodyParts(callback: (List<BodyPart>?) -> Unit) {
@@ -59,4 +64,45 @@ class PersonalRecordRepository {
             }
         }
     }
+
+    fun addPersonalRecord(moveSet: MoveSet, _weight: String, _reps: String, _sets: String, callback: (Response) -> Unit) {
+        val moveSetID = moveSet.moveSetID
+        val weight = _weight.toInt()
+        val reps = _reps.toInt()
+        val sets = _sets.toInt()
+        val currentUser = auth.currentUser
+        val uid = currentUser!!.uid
+
+        val personalRecord = PersonalRecord(uid, moveSetID, weight, reps, sets)
+
+        db.collection("personalRecords")
+            .whereEqualTo("uid", uid)
+            .whereEqualTo("moveSetID", moveSetID)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (documents.isEmpty) {
+                    db.collection("personalRecords")
+                        .add(personalRecord)
+                        .addOnSuccessListener { doc ->
+                            callback(Response(true, "Successfully added Personal Record"))
+                        }
+                        .addOnFailureListener { e ->
+                            callback(Response(false, "Error adding document $e"))
+                        }
+                } else {
+                    val docRef = documents.documents[0].reference
+                    docRef.set(personalRecord)
+                        .addOnSuccessListener {
+                            callback(Response(true, "Successfully updated Personal Record"))
+                        }
+                        .addOnFailureListener { e ->
+                            callback(Response(false, "Error updating document: $e"))
+                        }
+                }
+            }
+            .addOnFailureListener { e ->
+                callback(Response(false, "Error checking existing records: $e"))
+            }
+    }
+
 }

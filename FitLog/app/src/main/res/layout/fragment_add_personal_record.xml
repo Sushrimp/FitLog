@@ -30,6 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/weightField"
+            android:inputType="number"
             android:hint="Weight"/>
         <TextView
             android:layout_width="wrap_content"
@@ -40,21 +41,36 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/repsField"
+            android:inputType="number"
             android:hint="Reps"
             android:layout_marginHorizontal="10sp"/>
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/setsField"
+            android:inputType="number"
             android:hint="Sets"
             android:layout_marginHorizontal="10sp"/>
     </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/forumCheck"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/fieldsContainer"
+        android:layout_marginStart="20sp"
+        android:layout_marginTop="10sp"
+        android:layout_marginEnd="20sp"
+        android:layout_marginBottom="10sp"
+        android:text="Post Personal Record to Forum" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingHorizontal="20sp"
         android:text="Add Personal Record"
-        android:layout_below="@+id/fieldsContainer"
+        android:id="@+id/addButton"
+        android:layout_below="@+id/forumCheck"
         android:layout_centerHorizontal="true"/>
+
 </RelativeLayout>
