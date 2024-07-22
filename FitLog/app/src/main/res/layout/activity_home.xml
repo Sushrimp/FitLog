@@ -80,4 +80,23 @@
         app:backgroundTint="@color/purple_200"
         app:srcCompat="@android:drawable/ic_menu_add" />
 
+    <TextView
+        android:layout_marginTop="10sp"
+        android:layout_marginLeft="30sp"
+        android:layout_below="@id/scheduleContainer"
+        android:id="@+id/forumTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_bold"
+        android:text="Forum"
+        android:textSize="25sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/forumTitle"
+        android:id="@+id/forumList">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
 </RelativeLayout>

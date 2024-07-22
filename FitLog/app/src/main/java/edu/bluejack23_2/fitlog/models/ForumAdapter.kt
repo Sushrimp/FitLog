@@ -8,7 +8,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import edu.bluejack23_2.fitlog.R
 
-class ForumAdapter(private val forums: List<Forum>) : RecyclerView.Adapter<ForumAdapter.ForumViewHolder>() {
+class ForumAdapter(
+    private val forums: List<Forum>,
+    private val onForumClickListener: OnForumClickListener
+) : RecyclerView.Adapter<ForumAdapter.ForumViewHolder>() {
+
+    interface OnForumClickListener {
+        fun onForumClick(forumId: String)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ForumViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.list_forum, parent, false)
@@ -24,6 +31,10 @@ class ForumAdapter(private val forums: List<Forum>) : RecyclerView.Adapter<Forum
         holder.name.text = currentItem.name
         holder.username.text = currentItem.username
         holder.content.text = currentItem.content
+
+        holder.itemView.setOnClickListener {
+            onForumClickListener.onForumClick(currentItem.forumId)
+        }
     }
 
     class ForumViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

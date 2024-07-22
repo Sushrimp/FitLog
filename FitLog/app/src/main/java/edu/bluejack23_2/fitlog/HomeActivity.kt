@@ -11,16 +11,22 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.view.marginLeft
+import androidx.recyclerview.widget.LinearLayoutManager
 import edu.bluejack23_2.fitlog.databinding.ActivityAddScheduleBinding
 import edu.bluejack23_2.fitlog.databinding.ActivityHomeBinding
+import edu.bluejack23_2.fitlog.handler.ForumHandler
 import edu.bluejack23_2.fitlog.handler.ScheduleHandler
 import edu.bluejack23_2.fitlog.handler.UserHandler
+import edu.bluejack23_2.fitlog.models.Forum
+import edu.bluejack23_2.fitlog.models.ForumAdapter
+import edu.bluejack23_2.fitlog.models.ItemAdapter
 import org.jetbrains.annotations.Async.Schedule
 
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : AppCompatActivity(), ForumAdapter.OnForumClickListener {
 
     private lateinit var userHandler : UserHandler
     private lateinit var scheduleHandler: ScheduleHandler
+    private lateinit var forumHandler: ForumHandler
 
     private lateinit var binding : ActivityHomeBinding
 
@@ -35,6 +41,7 @@ class HomeActivity : AppCompatActivity() {
 
         userHandler = UserHandler()
         scheduleHandler = ScheduleHandler()
+        forumHandler = ForumHandler()
 
         userHandler.setProfilePicture(binding.profilePictureHome)
 
@@ -83,7 +90,10 @@ class HomeActivity : AppCompatActivity() {
                 }
             }
         }
+
+        setForumList();
     }
+
     private fun popupMenu() {
         val popupMenu = PopupMenu(applicationContext, binding.addButton)
         popupMenu.inflate(R.menu.add_menu)
@@ -121,4 +131,24 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    private fun setForumList() {
+        binding.forumList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding.forumList.setHasFixedSize(true)
+
+        forumHandler.getAllForum { forums ->
+            if (forums != null) {
+                val adapter = ForumAdapter(forums, this)
+                binding.forumList.adapter = adapter
+                println("Forum list: $forums")
+            } else {
+                println("No forums found or an error occurred.")
+            }
+        }
+    }
+
+    override fun onForumClick(forumId: String) {
+        val intent = Intent(this, ForumActivity::class.java)
+        intent.putExtra("forumId", forumId)
+        startActivity(intent)
+    }
 }

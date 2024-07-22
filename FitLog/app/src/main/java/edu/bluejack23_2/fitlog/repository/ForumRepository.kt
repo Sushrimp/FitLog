@@ -12,22 +12,35 @@ class ForumRepository {
         db = FirebaseFirestore.getInstance()
     }
 
-    private fun getAllForum(callback: (List<Forum>?) -> Unit) {
-        val forums = mutableListOf <Forum>()
-        db.collection("forum").get().addOnSuccessListener { querySnapshot ->
-            for(doc in querySnapshot){
-                val forum = Forum(
-                    doc.id,
-                    doc.getString("posterUid"),
-                    doc.getString("name"),
-                    doc.getString("username"),
-                    doc.getString("content"),
-                )
-                forums.add(forum)
+    fun getAllForum(callback: (ArrayList<Forum>?) -> Unit) {
+        val forums = ArrayList<Forum>()
+
+        db.collection("forums").get()
+            .addOnSuccessListener { querySnapshot ->
+                if (querySnapshot != null) {
+                    for (doc in querySnapshot.documents) {
+                        val forum = Forum(
+                            doc.id,
+                            doc.getString("posterUid"),
+                            doc.getString("name"),
+                            doc.getString("username"),
+                            doc.getString("content")
+                        )
+                        forums.add(forum)
+                    }
+                    callback(forums)
+                } else {
+                    println("ForumRepository, QuerySnapshot is null")
+                    callback(null)
+                }
             }
-            callback(forums)
-        }.addOnFailureListener {
-            callback(null)
-        }
+            .addOnFailureListener { exception ->
+                println("ForumRepository Error getting documents: " + exception)
+                callback(null)
+            }
+    }
+
+    fun getForum(forumId: String, callback: (Forum?) -> Unit) {
+
     }
 }
