@@ -25,4 +25,10 @@
         android:layout_marginTop="0sp"
         android:layout_below="@+id/searchPRField"/>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/prs"
+        android:layout_below="@id/addPRButton"/>
+
 </RelativeLayout>

@@ -2,8 +2,12 @@ package edu.bluejack23_2.fitlog
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.recyclerview.widget.LinearLayoutManager
 import edu.bluejack23_2.fitlog.databinding.ActivityAddPersonalRecordBinding
 import edu.bluejack23_2.fitlog.handler.PersonalRecordHandler
+import edu.bluejack23_2.fitlog.models.PRAdapter
+import edu.bluejack23_2.fitlog.models.PersonalRecordDetail
+import edu.bluejack23_2.fitlog.models.ReplyAdapter
 
 class AddPersonalRecordActivity : AppCompatActivity() {
 
@@ -28,7 +32,20 @@ class AddPersonalRecordActivity : AppCompatActivity() {
             showForm.show(supportFragmentManager, "showForm")
         }
 
-        handler.
+        setPRDetails()
+    }
+
+    private fun setPRDetails() {
+        handler.getUserPersonalRecord { personalRecords ->
+
+            val prSets = mutableListOf<PersonalRecordDetail>()
+//            personalRecords.let {
+//                prSets.addAll(it)
+//            }
+            val adapter = PRAdapter(prSets)
+            binding.prs.adapter = adapter
+            binding.prs.layoutManager = LinearLayoutManager(this)
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
