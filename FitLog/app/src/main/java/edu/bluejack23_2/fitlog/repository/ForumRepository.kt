@@ -66,30 +66,28 @@ class ForumRepository {
     }
 
     fun addForum(content: String, callback: (Response) -> Unit) {
-        var currentUser: User? = null
-
         val userRepo = UserRepository()
+
         userRepo.getUserDetails { response ->
-            currentUser = if (response.status) response.user else {
-                println("Failed to get user details: ${response.msg}")
-                null
+            val currentUser = response.user
+            if (response.status && currentUser != null) {
+                val newForum = hashMapOf(
+                    "posterUid" to currentUser.uid,
+                    "name" to currentUser.name,
+                    "username" to currentUser.username,
+                    "content" to content
+                )
+
+                db.collection("forums").add(newForum)
+                    .addOnSuccessListener { documentReference ->
+                        callback(Response(true, "Forum added successfully with ID: ${documentReference.id}"))
+                    }
+                    .addOnFailureListener { exception ->
+                        callback(Response(false, "Error adding forum: ${exception.message}"))
+                    }
+            } else {
+                callback(Response(false, "Failed to get user details: ${response.msg}"))
             }
         }
-
-        val newForum = hashMapOf(
-            "posterUid" to (currentUser?.uid ?: String),
-            "name" to (currentUser?.name ?: String),
-            "username" to (currentUser?.username ?: String),
-            "content" to content
-        )
-
-        db.collection("forums").add(newForum)
-            .addOnSuccessListener { documentReference ->
-                callback(Response(true, "Forum added successfully with ID: ${documentReference.id}"))
-            }
-            .addOnFailureListener { exception ->
-                callback(Response(false, "Error adding forum: ${exception.message}"))
-            }
-
     }
 }
