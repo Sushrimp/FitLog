@@ -146,6 +146,11 @@ class HomeActivity : AppCompatActivity(), ForumAdapter.OnForumClickListener {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        setForumList()
+    }
+
     override fun onForumClick(forumId: String) {
         val intent = Intent(this, ForumActivity::class.java)
         intent.putExtra("forumId", forumId)

@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import com.google.firebase.auth.FirebaseAuth
+import edu.bluejack23_2.fitlog.databinding.ActivityProfileBinding
 import edu.bluejack23_2.fitlog.handler.AuthenticationHandler
 import edu.bluejack23_2.fitlog.handler.UserHandler
 
@@ -16,10 +17,15 @@ class ProfileActivity : AppCompatActivity() {
 
     private lateinit var signOutButton : Button
 
+    private lateinit var binding: ActivityProfileBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
+
+        binding = ActivityProfileBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         // Action Bar
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -34,6 +40,23 @@ class ProfileActivity : AppCompatActivity() {
             handleSignOut()
         }
 
+        setDetails()
+
+        binding.editProfileProfile.setOnClickListener{
+            val showForm = EditProfileFragment()
+            showForm.show(supportFragmentManager, "showForm")
+        }
+    }
+
+    private fun handleSignOut (){
+        authHandler.signOut { }
+        val intent = Intent(this@ProfileActivity, OnboardingActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
+    }
+
+    private fun setDetails(){
         userHandler.getUserDetails { response ->
             if(response.status){
                 findViewById<TextView>(R.id.name_Profile).text = response.user.name
@@ -43,16 +66,12 @@ class ProfileActivity : AppCompatActivity() {
                 findViewById<TextView>(R.id.age_Profile).text = "Age : " + response.user.age
             }
         }
-
-        userHandler.setProfilePicture(findViewById<ImageView>(R.id.profilePicture_Profile))
+        userHandler.setProfilePicture(binding.profilePictureProfile)
     }
 
-    private fun handleSignOut (){
-        authHandler.signOut { }
-        val intent = Intent(this@ProfileActivity, OnboardingActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-        finish()
+    override fun onResume() {
+        super.onResume()
+        setDetails()
     }
 
     override fun onSupportNavigateUp(): Boolean {

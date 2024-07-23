@@ -1,35 +1,75 @@
 package edu.bluejack23_2.fitlog
 
 import android.os.Bundle
+import android.provider.ContactsContract.Profile
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RadioButton
+import android.widget.Toast
+import androidx.core.text.set
 import androidx.fragment.app.DialogFragment
+import edu.bluejack23_2.fitlog.databinding.FragmentAddPersonalRecordBinding
+import edu.bluejack23_2.fitlog.databinding.FragmentEditProfileBinding
+import edu.bluejack23_2.fitlog.handler.PersonalRecordHandler
+import edu.bluejack23_2.fitlog.handler.UserHandler
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [EditProfileFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class EditProfileFragment : DialogFragment() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private var _binding: FragmentEditProfileBinding? = null
+    private val binding get() = _binding!!
+
+    private var userHandler: UserHandler = UserHandler()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_edit_profile, container, false)
+        _binding = FragmentEditProfileBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setProfile()
+
+        binding.updateButtonEditProfile.setOnClickListener {
+            val selectedRadioButtonId = binding.radioGroupEditProfile.checkedRadioButtonId
+
+            if (selectedRadioButtonId != -1) {
+                val selectedRadioButton = binding.root.findViewById<RadioButton>(selectedRadioButtonId)
+                val genderSelected = selectedRadioButton.text.toString()
+                val name = binding.nameEditProfile.text.toString()
+                val username = binding.usernameEditProfile.text.toString()
+                val age = binding.ageEditProfile.text.toString()
+
+                userHandler.updateUser(name, username, age, genderSelected) { response ->
+                    if (!response.status) {
+                        Toast.makeText(requireContext(), response.msg, Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(requireContext(), "User updated successfully", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } else {
+                Toast.makeText(requireContext(), "Please select a gender", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun setProfile() {
+        userHandler.getUserDetails { response ->
+            binding.nameEditProfile.setText(response.user.name.toString())
+            binding.usernameEditProfile.setText(response.user.username.toString())
+            binding.ageEditProfile.setText(response.user.age.toString())
+            if(response.user.gender.equals("Male")) {
+                binding.maleRadioEditProfile.isChecked = true
+            } else {
+                binding.femaleRadioEditProfile.isChecked = true
+            }
+        }
+    }
 
 }

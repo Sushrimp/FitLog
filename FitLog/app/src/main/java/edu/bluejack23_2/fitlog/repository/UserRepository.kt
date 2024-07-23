@@ -159,4 +159,29 @@ class UserRepository {
             callback(response)
         }
     }
+
+    fun updateUser(name: String, username: String, age: String, gender: String, callback: (Response) -> Unit) {
+        val currentUser = auth.currentUser
+
+        if(currentUser != null){
+            val userRef = db.collection("users").document(currentUser.uid)
+            val userUpdates = hashMapOf(
+                "name" to name,
+                "username" to username,
+                "age" to age,
+                "gender" to gender
+            )
+
+            userRef.update(userUpdates as Map<String, Any>).addOnCompleteListener { updateTask ->
+                if (updateTask.isSuccessful) {
+                    callback(Response(true, "User updated successfully"))
+                } else {
+                    callback(Response(false, "Failed to update user details in Firestore"))
+                }
+            }
+        }
+        else {
+            callback(Response(false, "Not Authenticated"))
+        }
+    }
 }

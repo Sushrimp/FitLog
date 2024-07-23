@@ -3,6 +3,7 @@ package edu.bluejack23_2.fitlog.handler
 import android.widget.ImageView
 import android.widget.Toast
 import com.bumptech.glide.Glide
+import edu.bluejack23_2.fitlog.models.Response
 import edu.bluejack23_2.fitlog.models.UserResponse
 import edu.bluejack23_2.fitlog.repository.UserRepository
 
@@ -41,6 +42,18 @@ class UserHandler {
 
     fun getUserDetails(callback: (UserResponse) -> Unit){
         repo.getUserDetails { response ->
+            callback(response)
+        }
+    }
+
+    fun updateUser(name: String, username: String, age: String, gender: String, callback: (Response) -> Unit){
+        if (!name.isNotEmpty() || !username.isNotEmpty()) {
+            val response = Response(false, "All fields must be filled")
+            callback(response)
+            return
+        }
+
+        repo.updateUser(name, username, age, gender) { response ->
             callback(response)
         }
     }
