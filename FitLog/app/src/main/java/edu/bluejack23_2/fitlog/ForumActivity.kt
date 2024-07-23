@@ -1,17 +1,22 @@
 package edu.bluejack23_2.fitlog
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import edu.bluejack23_2.fitlog.databinding.ActivityForumBinding
 import edu.bluejack23_2.fitlog.databinding.ActivityHomeBinding
 import edu.bluejack23_2.fitlog.handler.ForumHandler
 import edu.bluejack23_2.fitlog.handler.UserHandler
 import edu.bluejack23_2.fitlog.models.Forum
+import edu.bluejack23_2.fitlog.models.ForumAdapter
+import edu.bluejack23_2.fitlog.models.ReplyAdapter
 
 class ForumActivity : AppCompatActivity() {
+    private lateinit var forumDetails : Forum
 
     private lateinit var userHandler : UserHandler
     private lateinit var forumHandler : ForumHandler
@@ -47,6 +52,7 @@ class ForumActivity : AppCompatActivity() {
             binding.username.text = "Error"
             binding.forumContent.text = "Error"
         }
+        setSendReply()
     }
 
     private fun setForumDetails(forumId: String) {
@@ -56,10 +62,32 @@ class ForumActivity : AppCompatActivity() {
                 binding.name.text = forum.name
                 binding.username.text = forum.username
                 binding.forumContent.text = forum.content
+                forumDetails = forum
+
+                val replies = mutableListOf<String>()
+                forum.replies?.let {
+                    replies.addAll(it)
+                }
+                val adapter = ReplyAdapter(replies)
+                binding.replies.adapter = adapter
+                binding.replies.layoutManager = LinearLayoutManager(this)
             } else {
                 binding.name.text = "Error"
                 binding.username.text = "Error"
                 binding.forumContent.text = "Error"
+            }
+        }
+    }
+
+    private fun setSendReply() {
+        binding.sendReplyButton.setOnClickListener{
+            val reply = binding.replyField.text.toString()
+
+            forumHandler.addReply(forumDetails.forumId, reply) { response ->
+                Toast.makeText(this, response.msg, Toast.LENGTH_SHORT).show()
+                if(response.status){
+                    binding.replyField.text.clear()
+                }
             }
         }
     }

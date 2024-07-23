@@ -53,7 +53,8 @@ class ForumRepository {
                         doc.getString("posterUid"),
                         doc.getString("name"),
                         doc.getString("username"),
-                        doc.getString("content")
+                        doc.getString("content"),
+                        doc.get("replies") as? List<String>
                     )
                     callback(forum)
                 } else {
@@ -88,6 +89,35 @@ class ForumRepository {
             } else {
                 callback(Response(false, "Failed to get user details: ${response.msg}"))
             }
+        }
+    }
+
+    fun addReply(forumId: String, newReply: String, callback: (Response) -> Unit) {
+        val forumDocRef = db.collection("forums").document(forumId)
+
+        if(forumDocRef != null){
+            forumDocRef.get()
+                .addOnSuccessListener { doc ->
+                    if (doc.exists()) {
+                        val replies = doc.get("replies") as? MutableList<String> ?: mutableListOf()
+                        replies.add(newReply)
+
+                        forumDocRef.update("replies", replies)
+                            .addOnSuccessListener {
+                                callback(Response(true, "Reply added successfully"))
+                            }
+                            .addOnFailureListener { exception ->
+                                callback(Response(false, "Error adding reply: ${exception.message}"))
+                            }
+                    } else {
+                        callback(Response(false, "Forum not found"))
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    callback(Response(false, "Error retrieving forum: ${exception.message}"))
+                }
+        } else {
+            callback(Response(false, "Error retrieving forum"))
         }
     }
 }

@@ -58,5 +58,6 @@ data class Forum(
     val posterUid: String?,
     val name: String?,
     val username: String?,
-    val content: String?
+    val content: String?,
+    val replies: List<String>? = null
 )
