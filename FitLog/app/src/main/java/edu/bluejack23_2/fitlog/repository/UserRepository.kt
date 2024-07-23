@@ -55,6 +55,41 @@ class UserRepository {
         }
     }
 
+    fun getProfilePictureById(userId: String, callback: (StorageResponse) -> Unit) {
+        val storageRef = storage.reference
+
+        if (userId == null) {
+            // User is not logged in, return the default empty profile picture
+            val fileRef = storageRef.child("profilePictures/emptyProfile.jpg")
+            val response = StorageResponse(true, fileRef)
+            callback(response)
+        } else {
+            val uid = userId
+            val userDirRef = storageRef.child("profilePictures")
+
+            userDirRef.listAll()
+                .addOnSuccessListener { result ->
+                    // Find the file with the user's UID
+                    val userFileRef = result.items.find { it.name.startsWith(uid) }
+                    if (userFileRef != null) {
+                        val response = StorageResponse(true, userFileRef)
+                        callback(response)
+                    } else {
+                        // No matching file found, return the default empty profile picture
+                        val emptyFileRef = storageRef.child("profilePictures/emptyProfile.jpg")
+                        val response = StorageResponse(false, emptyFileRef)
+                        callback(response)
+                    }
+                }
+                .addOnFailureListener {
+                    // Listing files failed, fallback to the default empty profile picture
+                    val emptyFileRef = storageRef.child("profilePictures/emptyProfile.jpg")
+                    val response = StorageResponse(false, emptyFileRef)
+                    callback(response)
+                }
+        }
+    }
+
 
     fun getUserDetails(callback: (UserResponse) -> Unit) {
         val currentUser = auth.currentUser

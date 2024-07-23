@@ -7,11 +7,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import edu.bluejack23_2.fitlog.R
+import edu.bluejack23_2.fitlog.handler.UserHandler
 
 class ForumAdapter(
     private val forums: List<Forum>,
     private val onForumClickListener: OnForumClickListener
 ) : RecyclerView.Adapter<ForumAdapter.ForumViewHolder>() {
+
+
 
     interface OnForumClickListener {
         fun onForumClick(forumId: String)
@@ -28,6 +31,11 @@ class ForumAdapter(
 
     override fun onBindViewHolder(holder: ForumViewHolder, position: Int) {
         val currentItem = forums[position]
+
+        var userHandler : UserHandler
+        userHandler = UserHandler()
+
+        currentItem.posterUid?.let { userHandler.setProfilePictureById(it, holder.image) }
         holder.name.text = currentItem.name
         holder.username.text = currentItem.username
         holder.content.text = currentItem.content
@@ -41,6 +49,7 @@ class ForumAdapter(
         val name: TextView = itemView.findViewById(R.id.name)
         val username: TextView = itemView.findViewById(R.id.username)
         val content: TextView = itemView.findViewById(R.id.forumContent)
+        val image: ImageView = itemView.findViewById(R.id.profilePicture)
     }
 }
 

@@ -26,6 +26,19 @@ class UserHandler {
         }
     }
 
+    fun setProfilePictureById(userId: String, profilePicture: ImageView) {
+        repo.getProfilePictureById(userId) { response ->
+            val fileRef = response.msg
+            fileRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                Glide.with(profilePicture.context)
+                    .load(downloadUrl)
+                    .into(profilePicture)
+            }.addOnFailureListener { exception ->
+                Toast.makeText(profilePicture.context, "Failed to get download URL: ${exception.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     fun getUserDetails(callback: (UserResponse) -> Unit){
         repo.getUserDetails { response ->
             callback(response)

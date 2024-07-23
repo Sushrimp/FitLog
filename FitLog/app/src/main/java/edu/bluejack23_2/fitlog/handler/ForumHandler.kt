@@ -16,4 +16,10 @@ class ForumHandler {
             callback(forums)
         }
     }
+
+    fun getForum(forumId: String, callback: (Forum?) -> Unit) {
+        repo.getForum(forumId){ forum ->
+            callback(forum)
+        }
+    }
 }
