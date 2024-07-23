@@ -2,10 +2,10 @@ package edu.bluejack23_2.fitlog.repository
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
 import edu.bluejack23_2.fitlog.models.BodyPart
 import edu.bluejack23_2.fitlog.models.MoveSet
 import edu.bluejack23_2.fitlog.models.PersonalRecord
+import edu.bluejack23_2.fitlog.models.PersonalRecordDetail
 import edu.bluejack23_2.fitlog.models.Response
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -103,6 +103,42 @@ class PersonalRecordRepository {
             .addOnFailureListener { e ->
                 callback(Response(false, "Error checking existing records: $e"))
             }
+    }
+
+    fun getUserPersonalRecord(callback: (personalRecords: List<PersonalRecord>?, message: String?) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val currentUser = auth.currentUser
+            val uid = currentUser!!.uid
+            val personalRecords = mutableListOf<PersonalRecordDetail>()
+            if(uid != null) {
+                try {
+                    val personalRecordSnapshot = db.collection("personalRecords")
+                        .whereEqualTo("uid", uid)
+                        .get()
+                        .await()
+
+                    for (prDoc in personalRecordSnapshot) {
+                        db.collection("moveSets")
+                            .document(prDoc.getString("moveSetID")!!).get()
+                            .addOnSuccessListener {doc ->
+                                val moveSet = MoveSet(doc.id, doc.getString("moveSet"))
+                                val weight = prDoc.getLong("weight")!!.toInt()
+                                val reps = prDoc.getLong("reps")!!.toInt()
+                                val sets = prDoc.getLong("sets")!!.toInt()
+                                val personalRecord = PersonalRecordDetail(uid, moveSet, weight, reps, sets)
+                                personalRecords.add(personalRecord)
+                            }
+                            .addOnFailureListener { e ->
+                                callback(null, "Error getting move set detail: $e")
+                            }
+                    }
+                    println(personalRecords)
+                }
+                catch (e: Exception) {
+                    callback(null, e.message)
+                }
+            }
+        }
     }
 
 }

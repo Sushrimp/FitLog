@@ -9,16 +9,23 @@ import com.google.firebase.auth.FirebaseAuth
 import edu.bluejack23_2.fitlog.models.BodyPartSpinnerAdapter
 import edu.bluejack23_2.fitlog.models.MoveSet
 import edu.bluejack23_2.fitlog.models.MoveSetSpinnerAdapter
+import edu.bluejack23_2.fitlog.models.PersonalRecord
 import edu.bluejack23_2.fitlog.models.Response
 import edu.bluejack23_2.fitlog.repository.AuthenticationRepository
+import edu.bluejack23_2.fitlog.repository.ForumRepository
 import edu.bluejack23_2.fitlog.repository.PersonalRecordRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class PersonalRecordHandler {
     private var repo: PersonalRecordRepository
     private var authRepo: AuthenticationRepository
+    private var forumRepo: ForumRepository
     constructor(){
         repo = PersonalRecordRepository()
         authRepo = AuthenticationRepository()
+        forumRepo = ForumRepository()
     }
 
     fun setAllBodyParts(context: Context?, bodyPartSpinner: Spinner) {
@@ -66,14 +73,32 @@ class PersonalRecordHandler {
                 } else if(sets.isEmpty() || sets.toInt() <= 0) {
                     callback(Response(false, "Please fill the sets field with number greater than 0"))
                 } else {
-                    repo.addPersonalRecord(moveSet, weight, reps, sets) {Response ->
-                        callback(Response)
-                    }
-                    if(forumCheck) {
-                        // post to forum function
+                    repo.addPersonalRecord(moveSet, weight, reps, sets) {response ->
+                        if(forumCheck && response.status) {
+                            val forumString = "I’m happy to say that I finally got a new PR for ${moveSet.moveSet} with $weight weight, $reps reps, $sets sets."
+                            forumRepo.addForum(forumString) {response ->
+                                if(response.status) {
+                                    callback(Response(true, "Successfully added Personal Record and Forum!"))
+                                } else {
+                                    callback(response)
+                                }
+                            }
+                        } else if(response.status) {
+                            callback(response)
+                        } else {
+                            callback(response)
+                        }
                     }
                 }
             }
         }
     }
+
+    fun getUserPersonalRecord(callback: (Response) -> Unit) {
+        repo.getUserPersonalRecord { personalRecords, message ->
+            println(personalRecords)
+            println(message)
+        }
+    }
+
 }

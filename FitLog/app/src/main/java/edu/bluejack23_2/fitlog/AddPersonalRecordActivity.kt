@@ -27,6 +27,8 @@ class AddPersonalRecordActivity : AppCompatActivity() {
             val showForm = AddPersonalRecordFragment()
             showForm.show(supportFragmentManager, "showForm")
         }
+
+        handler.
     }
 
     override fun onSupportNavigateUp(): Boolean {

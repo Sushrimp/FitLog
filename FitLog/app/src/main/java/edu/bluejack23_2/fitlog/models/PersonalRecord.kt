@@ -7,3 +7,11 @@ data class PersonalRecord (
     val reps: Int,
     val sets: Int
 )
+
+data class PersonalRecordDetail (
+    val uid: String,
+    val moveSet: MoveSet,
+    val weight: Int,
+    val reps: Int,
+    val sets: Int
+)
