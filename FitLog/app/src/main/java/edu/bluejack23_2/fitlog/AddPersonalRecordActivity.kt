@@ -7,7 +7,6 @@ import edu.bluejack23_2.fitlog.databinding.ActivityAddPersonalRecordBinding
 import edu.bluejack23_2.fitlog.handler.PersonalRecordHandler
 import edu.bluejack23_2.fitlog.models.PRAdapter
 import edu.bluejack23_2.fitlog.models.PersonalRecordDetail
-import edu.bluejack23_2.fitlog.models.ReplyAdapter
 
 class AddPersonalRecordActivity : AppCompatActivity() {
 
@@ -36,15 +35,16 @@ class AddPersonalRecordActivity : AppCompatActivity() {
     }
 
     private fun setPRDetails() {
-        handler.getUserPersonalRecord { personalRecords ->
-
-            val prSets = mutableListOf<PersonalRecordDetail>()
-//            personalRecords.let {
-//                prSets.addAll(it)
-//            }
-            val adapter = PRAdapter(prSets)
-            binding.prs.adapter = adapter
-            binding.prs.layoutManager = LinearLayoutManager(this)
+        handler.getUserPersonalRecord { personalRecords, message ->
+            if(personalRecords != null){
+                val prSets = mutableListOf<PersonalRecordDetail>()
+                personalRecords.let {
+                    prSets.addAll(it)
+                }
+                val adapter = PRAdapter(prSets)
+                binding.prs.adapter = adapter
+                binding.prs.layoutManager = LinearLayoutManager(this)
+            }
         }
     }
 

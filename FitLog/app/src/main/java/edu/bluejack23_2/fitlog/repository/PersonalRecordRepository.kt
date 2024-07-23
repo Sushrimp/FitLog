@@ -9,6 +9,8 @@ import edu.bluejack23_2.fitlog.models.PersonalRecordDetail
 import edu.bluejack23_2.fitlog.models.Response
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -105,40 +107,50 @@ class PersonalRecordRepository {
             }
     }
 
-    fun getUserPersonalRecord(callback: (personalRecords: List<PersonalRecord>?, message: String?) -> Unit) {
+    fun getUserPersonalRecord(callback: (personalRecords: List<PersonalRecordDetail>?, message: String?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val currentUser = auth.currentUser
-            val uid = currentUser!!.uid
-            val personalRecords = mutableListOf<PersonalRecordDetail>()
-            if(uid != null) {
+            val uid = currentUser?.uid
+
+            if (uid != null) {
                 try {
+                    val personalRecords = mutableListOf<PersonalRecordDetail>()
                     val personalRecordSnapshot = db.collection("personalRecords")
                         .whereEqualTo("uid", uid)
                         .get()
                         .await()
 
-                    for (prDoc in personalRecordSnapshot) {
-                        db.collection("moveSets")
-                            .document(prDoc.getString("moveSetID")!!).get()
-                            .addOnSuccessListener {doc ->
-                                val moveSet = MoveSet(doc.id, doc.getString("moveSet"))
+                    val deferreds = personalRecordSnapshot.documents.map { prDoc ->
+                        async {
+                            try {
+                                val moveSetDoc = db.collection("moveSets")
+                                    .document(prDoc.getString("moveSetID")!!)
+                                    .get()
+                                    .await()
+
+                                val moveSet = MoveSet(moveSetDoc.id, moveSetDoc.getString("moveSet"))
                                 val weight = prDoc.getLong("weight")!!.toInt()
                                 val reps = prDoc.getLong("reps")!!.toInt()
                                 val sets = prDoc.getLong("sets")!!.toInt()
                                 val personalRecord = PersonalRecordDetail(uid, moveSet, weight, reps, sets)
                                 personalRecords.add(personalRecord)
+                            } catch (e: Exception) {
+                                callback(null, "Error in fetching Move Set: $e")
                             }
-                            .addOnFailureListener { e ->
-                                callback(null, "Error getting move set detail: $e")
-                            }
+                        }
                     }
-                    println(personalRecords)
-                }
-                catch (e: Exception) {
+
+                    deferreds.awaitAll()
+
+                    callback(personalRecords, null)
+                } catch (e: Exception) {
                     callback(null, e.message)
                 }
+            } else {
+                callback(null, "User is not logged in")
             }
         }
     }
+
 
 }

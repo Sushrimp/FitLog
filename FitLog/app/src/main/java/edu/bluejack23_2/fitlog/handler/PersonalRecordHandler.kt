@@ -10,6 +10,7 @@ import edu.bluejack23_2.fitlog.models.BodyPartSpinnerAdapter
 import edu.bluejack23_2.fitlog.models.MoveSet
 import edu.bluejack23_2.fitlog.models.MoveSetSpinnerAdapter
 import edu.bluejack23_2.fitlog.models.PersonalRecord
+import edu.bluejack23_2.fitlog.models.PersonalRecordDetail
 import edu.bluejack23_2.fitlog.models.Response
 import edu.bluejack23_2.fitlog.repository.AuthenticationRepository
 import edu.bluejack23_2.fitlog.repository.ForumRepository
@@ -40,7 +41,6 @@ class PersonalRecordHandler {
     }
 
     fun setMoveSets(context: Context?, bodyPart: String, moveSetSpinner: Spinner) {
-        println(bodyPart)
         repo.getMoveSetsByBodyPart(bodyPart) { moveSets, error ->
             if (moveSets != null && context != null && error == null) {
                 (context as? Activity)?.runOnUiThread {
@@ -94,10 +94,9 @@ class PersonalRecordHandler {
         }
     }
 
-    fun getUserPersonalRecord(callback: (Response) -> Unit) {
+    fun getUserPersonalRecord(callback: (personalRecords: List<PersonalRecordDetail>?, message: String?) -> Unit) {
         repo.getUserPersonalRecord { personalRecords, message ->
-            println(personalRecords)
-            println(message)
+            callback(personalRecords, message)
         }
     }
 
