@@ -1,7 +1,9 @@
 package edu.bluejack23_2.fitlog.repository
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import edu.bluejack23_2.fitlog.models.BodyPart
 import edu.bluejack23_2.fitlog.models.Forum
 import edu.bluejack23_2.fitlog.models.Response
@@ -19,7 +21,9 @@ class ForumRepository {
     fun getAllForum(callback: (ArrayList<Forum>?) -> Unit) {
         val forums = ArrayList<Forum>()
 
-        db.collection("forums").get()
+        db.collection("forums")
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .get()
             .addOnSuccessListener { querySnapshot ->
                 if (querySnapshot != null) {
                     for (doc in querySnapshot.documents) {
@@ -76,7 +80,8 @@ class ForumRepository {
                     "posterUid" to currentUser.uid,
                     "name" to currentUser.name,
                     "username" to currentUser.username,
-                    "content" to content
+                    "content" to content,
+                    "timestamp" to FieldValue.serverTimestamp()
                 )
 
                 db.collection("forums").add(newForum)

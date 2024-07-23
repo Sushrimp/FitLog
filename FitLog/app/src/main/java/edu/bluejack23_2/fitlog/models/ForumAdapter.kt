@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.Timestamp
 import edu.bluejack23_2.fitlog.R
 import edu.bluejack23_2.fitlog.handler.UserHandler
 
@@ -59,5 +60,6 @@ data class Forum(
     val name: String?,
     val username: String?,
     val content: String?,
-    val replies: List<String>? = null
+    val replies: List<String>? = null,
+    val timestamp: Timestamp? = null
 )
