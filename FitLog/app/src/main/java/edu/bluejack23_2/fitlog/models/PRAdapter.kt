@@ -19,7 +19,7 @@ class PRAdapter(private val prs : List<PersonalRecordDetail>) : RecyclerView.Ada
 
     override fun onBindViewHolder(holder: PRViewHolder, position: Int) {
         val currentItem = prs[position]
-        holder.moveSet.text = currentItem.moveSet.toString()
+        holder.moveSet.text = currentItem.moveSet.moveSet.toString()
         holder.detail.text = "Weight : " + currentItem.weight.toString() + "kg - Set : " + currentItem.sets.toString()  + " - Rep : " + currentItem.reps.toString()
     }
 

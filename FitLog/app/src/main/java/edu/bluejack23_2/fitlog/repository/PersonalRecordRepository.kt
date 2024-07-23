@@ -13,6 +13,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 class PersonalRecordRepository {
     private var db: FirebaseFirestore
@@ -107,6 +108,51 @@ class PersonalRecordRepository {
             }
     }
 
+//    fun getUserPersonalRecord(callback: (personalRecords: List<PersonalRecordDetail>?, message: String?) -> Unit) {
+//        CoroutineScope(Dispatchers.IO).launch {
+//            val currentUser = auth.currentUser
+//            val uid = currentUser?.uid
+//
+//            if (uid != null) {
+//                try {
+//                    val personalRecords = mutableListOf<PersonalRecordDetail>()
+//                    val personalRecordSnapshot = db.collection("personalRecords")
+//                        .whereEqualTo("uid", uid)
+//                        .get()
+//                        .await()
+//
+//                    val deferreds = personalRecordSnapshot.documents.map { prDoc ->
+//                        async {
+//                            try {
+//                                val moveSetDoc = db.collection("moveSets")
+//                                    .document(prDoc.getString("moveSetID")!!)
+//                                    .get()
+//                                    .await()
+//
+//                                val moveSet = MoveSet(moveSetDoc.id, moveSetDoc.getString("moveSet"))
+//                                val weight = prDoc.getLong("weight")!!.toInt()
+//                                val reps = prDoc.getLong("reps")!!.toInt()
+//                                val sets = prDoc.getLong("sets")!!.toInt()
+//                                val personalRecord = PersonalRecordDetail(uid, moveSet, weight, reps, sets)
+//                                personalRecords.add(personalRecord)
+//                            } catch (e: Exception) {
+//                                callback(null, "Error in fetching Move Set: $e")
+//                            }
+//                        }
+//                    }
+//
+//                    deferreds.awaitAll()
+//
+//                    callback(personalRecords, null)
+//                } catch (e: Exception) {
+//                    callback(null, e.message)
+//                }
+//            } else {
+//                callback(null, "User is not logged in")
+//            }
+//        }
+//    }
+
     fun getUserPersonalRecord(callback: (personalRecords: List<PersonalRecordDetail>?, message: String?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val currentUser = auth.currentUser
@@ -135,19 +181,27 @@ class PersonalRecordRepository {
                                 val personalRecord = PersonalRecordDetail(uid, moveSet, weight, reps, sets)
                                 personalRecords.add(personalRecord)
                             } catch (e: Exception) {
-                                callback(null, "Error in fetching Move Set: $e")
+                                withContext(Dispatchers.Main) {
+                                    callback(null, "Error in fetching Move Set: $e")
+                                }
                             }
                         }
                     }
 
                     deferreds.awaitAll()
 
-                    callback(personalRecords, null)
+                    withContext(Dispatchers.Main) {
+                        callback(personalRecords, null)
+                    }
                 } catch (e: Exception) {
-                    callback(null, e.message)
+                    withContext(Dispatchers.Main) {
+                        callback(null, e.message)
+                    }
                 }
             } else {
-                callback(null, "User is not logged in")
+                withContext(Dispatchers.Main) {
+                    callback(null, "User is not logged in")
+                }
             }
         }
     }
