@@ -46,6 +46,10 @@ class ProfileActivity : AppCompatActivity() {
             val showForm = EditProfileFragment()
             showForm.show(supportFragmentManager, "showForm")
         }
+        binding.changePasswordProfile.setOnClickListener{
+            val showForm = ChangePasswordFragment()
+            showForm.show(supportFragmentManager, "showForm")
+        }
     }
 
     private fun handleSignOut (){

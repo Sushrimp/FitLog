@@ -52,7 +52,7 @@ class ForumActivity : AppCompatActivity() {
             binding.username.text = "Error"
             binding.forumContent.text = "Error"
         }
-        setSendReply()
+        setSendReply(forumId)
     }
 
     private fun setForumDetails(forumId: String) {
@@ -79,7 +79,7 @@ class ForumActivity : AppCompatActivity() {
         }
     }
 
-    private fun setSendReply() {
+    private fun setSendReply(forumId: String) {
         binding.sendReplyButton.setOnClickListener{
             val reply = binding.replyField.text.toString()
 
@@ -89,6 +89,8 @@ class ForumActivity : AppCompatActivity() {
                     binding.replyField.text.clear()
                 }
             }
+
+            setForumDetails(forumId);
         }
     }
 

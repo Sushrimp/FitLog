@@ -2,6 +2,7 @@ package edu.bluejack23_2.fitlog.handler
 
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import com.google.firebase.auth.EmailAuthProvider
 import edu.bluejack23_2.fitlog.SignUpActivity
 import edu.bluejack23_2.fitlog.models.Response
 import edu.bluejack23_2.fitlog.repository.AuthenticationRepository
@@ -58,6 +59,28 @@ class AuthenticationHandler {
 
     fun signOut(callback: (Response) -> Unit){
         repo.signOut(){response ->
+            callback(response)
+        }
+    }
+
+    fun changePassword(oldPassword: String, newPassword: String, confirmPassword: String, callback: (Response) -> Unit){
+        if(oldPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()){
+            callback(Response(false, "All field must be filled"))
+            return
+        }
+
+        if(newPassword.length < 8 || newPassword.length > 20){
+            val response = Response(false, "New Password length must be between 8 and 20 characters")
+            callback(response)
+            return
+        }
+
+        if(!newPassword.equals(confirmPassword)){
+            callback(Response(false, "New Password and Confirm Password must be the same"))
+            return
+        }
+
+        repo.changePassword(oldPassword, newPassword){ response ->
             callback(response)
         }
     }

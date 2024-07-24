@@ -72,13 +72,13 @@
     </RadioGroup>
 
     <Button
-        android:id="@+id/updateButton_editProfile"
-        android:layout_below="@id/radioGroup_editProfile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/poppins_bold"
-        android:layout_centerHorizontal="true"
-        android:orientation="horizontal"
-        android:text="Update" />
+    android:id="@+id/updateButton_editProfile"
+    android:layout_below="@id/radioGroup_editProfile"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:fontFamily="@font/poppins_bold"
+    android:layout_centerHorizontal="true"
+    android:orientation="horizontal"
+    android:text="Update" />
 
 </RelativeLayout>

@@ -2,6 +2,7 @@ package edu.bluejack23_2.fitlog.repository
 
 import android.content.Intent
 import android.widget.RadioGroup
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import edu.bluejack23_2.fitlog.HomeActivity
@@ -73,5 +74,32 @@ class AuthenticationRepository {
         } else {
             callback(null)
         }
+    }
+
+    fun changePassword(oldPassword: String, newPassword: String, callback: (Response) -> Unit){
+        val currentUser = auth.currentUser
+
+        if (currentUser == null) {
+            callback(Response(false, "No user is currently signed in."))
+            return
+        }
+
+        val credential = EmailAuthProvider.getCredential(currentUser.email!!, oldPassword)
+
+        currentUser.reauthenticate(credential)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    currentUser.updatePassword(newPassword)
+                        .addOnCompleteListener { updateTask ->
+                            if (updateTask.isSuccessful) {
+                                callback(Response(true, "Password updated successfully."))
+                            } else {
+                                callback(Response(false, "Password update failed: ${updateTask.exception?.message}"))
+                            }
+                        }
+                } else {
+                    callback(Response(false, "Old password is wrong"))
+                }
+            }
     }
 }
