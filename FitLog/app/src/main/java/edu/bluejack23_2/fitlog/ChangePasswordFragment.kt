@@ -29,7 +29,6 @@ class ChangePasswordFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setChangePassword()
-
     }
 
     private fun setChangePassword() {
