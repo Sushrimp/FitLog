@@ -94,6 +94,11 @@ class ForumActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        forumHandler.stopListening() // Stop listening when activity is destroyed
+    }
+
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true

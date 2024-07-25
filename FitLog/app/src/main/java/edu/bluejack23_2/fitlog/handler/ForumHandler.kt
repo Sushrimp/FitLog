@@ -23,6 +23,11 @@ class ForumHandler {
             callback(forum)
         }
     }
+
+    fun stopListening() {
+        repo.stopListening()
+    }
+
     fun addReply(forumId: String, newReply: String, callback: (Response) -> Unit) {
         if(!newReply.isNotBlank()){
             callback(Response(false, "Reply can't be empty"))

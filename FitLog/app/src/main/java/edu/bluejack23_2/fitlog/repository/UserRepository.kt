@@ -160,6 +160,56 @@ class UserRepository {
         }
     }
 
+    fun getUserDetailsById(uid: String, callback: (UserResponse) -> Unit) {
+        db.collection("users").document(uid).get()
+            .addOnSuccessListener { doc ->
+                if (doc != null && doc.exists()) {
+                    val response = UserResponse(
+                        true,
+                        User(
+                            uid = uid,
+                            age = doc.getString("age"),
+                            email = doc.getString("email"),
+                            username = doc.getString("username"),
+                            name = doc.getString("name"),
+                            gender = doc.getString("gender")
+                        ),
+                        "User detail retrieved successfully"
+                    )
+                    callback(response)
+                } else {
+                    val response = UserResponse(
+                        false,
+                        User(
+                            uid = "",
+                            age = "",
+                            email = "",
+                            username = "",
+                            name = "",
+                            gender = ""
+                        ),
+                        "User detail retrieval failed: document does not exist"
+                    )
+                    callback(response)
+                }
+            }
+            .addOnFailureListener { exception ->
+                val response = UserResponse(
+                    false,
+                    User(
+                        uid = "",
+                        age = "",
+                        email = "",
+                        username = "",
+                        name = "",
+                        gender = ""
+                    ),
+                    "User detail retrieval failed: ${exception.message}"
+                )
+                callback(response)
+            }
+    }
+
     fun updateUser(name: String, username: String, age: String, gender: String, callback: (Response) -> Unit) {
         val currentUser = auth.currentUser
 
@@ -184,4 +234,6 @@ class UserRepository {
             callback(Response(false, "Not Authenticated"))
         }
     }
+
+
 }
