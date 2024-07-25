@@ -84,7 +84,8 @@ class HomeActivity : AppCompatActivity(), ForumAdapter.OnForumClickListener {
                         )
                     }
                     startActivityButton.setOnClickListener {
-                        // start activity function
+                        val intent = Intent(this@HomeActivity, TodaysSessionActivity::class.java)
+                        startActivity(intent)
                     }
                     binding.scheduleLinearLayout.addView(startActivityButton)
                 }

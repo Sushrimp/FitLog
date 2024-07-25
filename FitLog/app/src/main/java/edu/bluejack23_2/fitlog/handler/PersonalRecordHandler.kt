@@ -75,7 +75,7 @@ class PersonalRecordHandler {
                 } else {
                     repo.addPersonalRecord(moveSet, weight, reps, sets) {response ->
                         if(forumCheck && response.status) {
-                            val forumString = "I’m happy to say that I finally got a new PR for ${moveSet.moveSet} with $weight weight, $reps reps, $sets sets."
+                            val forumString = "I’m happy to say that I finally got a new PR for ${moveSet.moveSet} with ${weight}kg weight, $reps reps, $sets sets."
                             forumRepo.addForum(forumString) {response ->
                                 if(response.status) {
                                     callback(Response(true, "Successfully added Personal Record and Forum!"))
