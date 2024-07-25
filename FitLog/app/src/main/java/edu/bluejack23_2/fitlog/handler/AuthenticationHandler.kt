@@ -54,7 +54,6 @@ class AuthenticationHandler {
         repo.signUp(user, email, password){response ->
             callback(response)
         }
-
     }
 
     fun signOut(callback: (Response) -> Unit){
