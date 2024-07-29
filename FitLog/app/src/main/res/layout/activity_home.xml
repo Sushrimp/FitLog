@@ -77,7 +77,7 @@
         android:layout_marginEnd="20sp"
         android:layout_marginBottom="20sp"
         android:clickable="true"
-        app:backgroundTint="@color/purple_200"
+        app:backgroundTint="?attr/colorPrimary"
         app:srcCompat="@android:drawable/ic_menu_add" />
 
     <TextView
